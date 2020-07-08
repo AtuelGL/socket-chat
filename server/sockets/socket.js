@@ -21,13 +21,17 @@ io.on('connection', (client) => {
 
         client.broadcast.to(user.room).emit('listPersons', users.getPersonsPerRoom(user.room));
 
+        client.broadcast.to(user.room).emit('createMessage', createMessage('Admin', `${user.name} se unió`));
+
+
         return callback(users.getPersonsPerRoom(user.room));
     });
 
-    client.on('createMessage', (data) => {
+    client.on('createMessage', (data, callback) => {
         let person = users.getPerson(client.id);
         let message = createMessage(person.name, data.message);
         client.broadcast.to(person.room).emit('createMessage', message);
+        callback(message);
     });
 
 
